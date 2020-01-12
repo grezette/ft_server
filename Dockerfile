@@ -5,54 +5,34 @@
 #                                                     +:+ +:+         +:+      #
 #    By: grezette <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2020/01/04 18:34:11 by grezette          #+#    #+#              #
-#    Updated: 2020/01/05 18:51:53 by grezette         ###   ########.fr        #
+#    Created: 2020/01/08 15:03:44 by grezette          #+#    #+#              #
+#    Updated: 2020/01/12 19:18:38 by grezette         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 FROM debian:buster
 
-RUN  apt-get update && \
-	 apt-get install -y nginx && \
-	 apt-get install -y php-mysql && \
-	 apt install -y mariadb-server mariadb-client && \
-	 apt install -y wget && \
-	 apt-get install -y php-mbstring php-fpm  php-gd
+RUN apt-get update && \
+	apt-get install -y wget && \
+	apt-get install -y nginx && \
+	apt-get install -y php7.3 php7.3-fpm php7.3-mysql php-common php7.3-cli php7.3-common php7.3-json php7.3-opcache php7.3-readline && \
+	apt-get install -y openssl && \
+	apt-get install -y php-mbstring php-zip php-gd && \
+	apt-get install -y php-mysql && \
+	apt-get install -y mariadb-server-10.3
 
-RUN rm -rf /etc/nginx/sites-available/default
+RUN	apt-get install -y vim
 
-RUN mkdir -p /var/www/localhost/phpmyadmin
+#init phpmyadmin
+RUN wget https://files.phpmyadmin.net/phpMyAdmin/4.9.0.1/phpMyAdmin-4.9.0.1-all-languages.tar.gz && \
+	tar xvf phpMyAdmin-4.9.0.1-all-languages.tar.gz && \
+	mv phpMyAdmin-4.9.0.1-all-languages/ /var/www/html/phpmyadmin
 
-RUN wget https://files.phpmyadmin.net/phpMyAdmin/5.0.0/phpMyAdmin-5.0.0-english.tar.gz && \
-	tar xvf phpMyAdmin-5.0.0-english.tar.gz -C /var/www/localhost/phpmyadmin
+#init nginx
+RUN chown www-data:www-data /usr/share/nginx/html/ -R
 
-
-#start mysql
-#RUN	service mysql start
-#RUN	mysql -u root -p=password
-#RUN	CREATE DATABASE wordpress DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;
-#RUN GRANT ALL ON wordpress.* TO 'wordpressuser'@'localhost' IDENTIFIED BY 'enter-password-here';
-#RUN	FLUSH PRIVILEGES;
-#RUN EXIT;
-
-#start word press
-#RUN mkdir /var/www/localhost/wordpress
-#RUN cd /tmp
-#RUN wget https://wordpress.org/latest.tar.gz
-#RUN tar xzvf latest.tar.gz -C /var/www/localhost/wordpress
-
-ADD	./srcs/default /etc/nginx/sites-available
-ADD ./srcs/nginx-selfsigned.crt /etc/ssl/certs
-ADD ./srcs/nginx-selfsigned.key /etc/ssl/private
-ADD ./srcs/wp-config.php /var/www/localhost
-ADD  ./srcs/start.sh /
-
-#RUN chown -R www-data:www-data /var/www/* && \
-#	chmod -R 755 /var/www/*
-
-#RUN service mysql restart
-#RUN	service nginx restart
+COPY ./srcs/default /etc/nginx/sites-available/
+COPY ./srcs/ssl-cert-snakeoil.pem /etc/ssl/certs/
+COPY ./srcs/ssl-cert-snakeoil.key /etc/ssl/private/
 
 EXPOSE 80
-
-CMD bash start.sh
