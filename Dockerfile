@@ -6,7 +6,7 @@
 #    By: grezette <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/01/08 15:03:44 by grezette          #+#    #+#              #
-#    Updated: 2020/01/12 22:05:55 by grezette         ###   ########.fr        #
+#    Updated: 2020/01/17 23:04:01 by grezette         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ RUN apt-get update && \
 	apt-get install -y openssl && \
 	apt-get install -y php-mbstring php-zip php-gd && \
 	apt-get install -y php-mysql && \
-	apt-get install -y mariadb-server-10.3
+	apt-get install -y default-mysql-server
 
 RUN	apt-get install -y vim
 
